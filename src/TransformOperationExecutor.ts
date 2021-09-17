@@ -2,6 +2,7 @@ import { defaultMetadataStorage } from './storage';
 import { TypeHelpOptions, TypeOptions, ClassTransformOptions, TypeMetadata } from './interfaces';
 import { TransformationType } from './enums';
 import { getGlobal, isPromise } from './utils';
+import * as stream from 'stream';
 
 function instantiateArrayType(arrayType: Function): Array<any> | Set<any> {
   const array = new (arrayType as any)();
@@ -114,6 +115,8 @@ export class TransformOperationExecutor {
       }
       if (value === null || value === undefined) return value;
       return new Date(value);
+    } else if (value instanceof stream.Readable) {
+      return value;
     } else if (!!getGlobal().Buffer && (targetType === Buffer || value instanceof Buffer) && !isMap) {
       if (value === null || value === undefined) return value;
       return Buffer.from(value);
